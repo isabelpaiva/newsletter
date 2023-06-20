@@ -11,6 +11,12 @@ class NewsSerializer(serializers.Serializer):
     def create(self, validated_data):
         return News.objects.create(**validated_data)
     
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.content = validated_data.get('content', instance.content)
+        instance.save()
+        return instance
+    
 
 class NewsReviewSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -23,3 +29,4 @@ class NewsReviewSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return NewsReview.objects.create(**validated_data)
+    

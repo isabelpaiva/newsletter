@@ -20,6 +20,7 @@ class CreateListNewView(APIView):
         return Response(serializer.data)
     
 
+
 class CreateListReview(APIView):
     authentication_classes = [JWTAuthentication]
     def post(self, request: Request, news_id: int):
@@ -38,3 +39,15 @@ class DeleteReview(APIView):
         self.check_object_permissions(request, review)
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class UpdateNewsView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrReadOnly]
+
+    def patch(self, request: Request, news_id: int):
+        news = get_object_or_404(News, id=news_id)
+        serializer = NewsSerializer(news, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
